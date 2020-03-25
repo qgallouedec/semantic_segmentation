@@ -65,7 +65,7 @@ NeuralNetwork(
 
 #### Max pooling has been used for down-sizing the input volume. Instead of max pooling, is it possible to simply make use of convolution with a different stride, e.g., 2 ? How does it impact the performance ?
 
-We remove the maxpooling layer and modify the stride for the second convolutions. The resulting neural network is ```monmodelname```.
+We remove the maxpooling layer and modify the stride for the second convolutions. The resulting neural network is ```UNETWithoutPooling```.
 
 Since the output of the convolutions ```(conv1_2)```, ```(conv2_2)```, ```(conv3_2)``` and ```(conv4_2)``` does not have the same size as before, we can't concatenate after the upsampling layers. Then, I choose to concatenate with the output of the first convolution layers : ```(conv1_1)```, ```(conv2_1)```, ```(conv3_1)``` and ```(conv4_1)```.
 
@@ -85,7 +85,7 @@ By pooling, crucial information on the location of features is lost. The skip co
 
 If we remove the skip connections from the proposed architecture, I think it will decrease the accuracy of the model. It will still be able to roughly predict the mask, but it will be very imprecise on the contours.
 
-To confirm my intution, I implement the model named ```modelname```. The difference with the UNET model is that this new model does not concatenate the outputs of the convolutional layers during decoding.
+To confirm my intution, I implement the model named ```UNETWithoutConcat```. The difference with the UNET model is that this new model does not concatenate the outputs of the convolutional layers during decoding.
 Since there is twice less channel in input for ```(conv6_1)```, ```(conv7_1)```, ```(conv8_1)``` and  ```(conv9_1)```, their input size are halved.
 
 Here are the results.
@@ -101,6 +101,8 @@ To give an answers, let us create another models that add, max, and min rather t
 Here are the results for these three new models.
 
 ![](docs/without_concat.png)
+
+It seems like the performance are quite similar to UNET when we replace concatenation by MIN or MAX. Surprisingly, the network learns much less when concatenation is replaced by addition.
 
 ### Other architectures
 #### The proposed architecture is an auto-encoder like architecture, i.e., composed of an encoder and a decoder. Is it necessary ? 
